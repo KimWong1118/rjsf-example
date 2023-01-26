@@ -1,0 +1,1044 @@
+{
+  "title": "CicadaTestIn",
+  "required": ["description", "test_options", "cluster_options"],
+  "type": "object",
+  "properties": {
+    "test_type": {
+      "title": "Test Type",
+      "enum": ["cicada"],
+      "type": "string",
+      "default": "cicada"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "tags": {
+      "title": "Tags",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "test_options": {
+      "title": "CicadaOptionsIn",
+      "required": ["suit_name"],
+      "type": "object",
+      "properties": {
+        "cicada_sha": {
+          "title": "Cicada Sha",
+          "type": "string",
+          "default": "origin/master"
+        },
+        "suit_name": {
+          "title": "Suit Name",
+          "type": "string"
+        },
+        "locust_users": {
+          "title": "Locust Users",
+          "type": "integer",
+          "default": 1
+        },
+        "locust_spawn_rate": {
+          "title": "Locust Spawn Rate",
+          "type": "integer",
+          "default": 1
+        },
+        "locust_run_time": {
+          "title": "Locust Run Time",
+          "type": "string",
+          "default": "30m"
+        },
+        "additional_arguments": {
+          "title": "Additional Arguments",
+          "type": "string",
+          "default": "{}"
+        }
+      }
+    },
+    "cluster_options": {
+      "title": "Cluster Options",
+      "oneOf": [
+        {
+          "title": "AWSClusterIn",
+          "required": ["artifact", "options"],
+          "type": "object",
+          "properties": {
+            "launch_type": {
+              "title": "Launch Type",
+              "enum": ["aws"],
+              "type": "string",
+              "default": "aws"
+            },
+            "artifact": {
+              "title": "Artifact",
+              "oneOf": [
+                {
+                  "title": "NewArtifactIn",
+                  "type": "object",
+                  "properties": {
+                    "artifact_type": {
+                      "title": "Artifact Type",
+                      "enum": ["new"],
+                      "type": "string",
+                      "default": "new"
+                    },
+                    "datarobot_branch": {
+                      "title": "Datarobot Branch",
+                      "type": "string",
+                      "default": "origin/master"
+                    }
+                  }
+                },
+                {
+                  "title": "DefinedArtifactIn",
+                  "type": "object",
+                  "properties": {
+                    "artifact_type": {
+                      "title": "Artifact Type",
+                      "enum": ["defined"],
+                      "type": "string",
+                      "default": "defined"
+                    },
+                    "datarobot_artifact": {
+                      "title": "Datarobot Artifact",
+                      "type": "string",
+                      "default": "shakedown_master"
+                    }
+                  }
+                },
+                {
+                  "title": "CustomArtifactIn",
+                  "required": ["bundle_version"],
+                  "type": "object",
+                  "properties": {
+                    "artifact_type": {
+                      "title": "Artifact Type",
+                      "enum": ["custom"],
+                      "type": "string",
+                      "default": "custom"
+                    },
+                    "bundle_version": {
+                      "title": "Bundle Version",
+                      "type": "string"
+                    },
+                    "csd_version": {
+                      "title": "Csd Version",
+                      "type": "string"
+                    },
+                    "dr_parcel": {
+                      "title": "Dr Parcel",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "title": "CustomDrkarArtifactIn",
+                  "required": ["drkar_artifacts_version"],
+                  "type": "object",
+                  "properties": {
+                    "artifact_type": {
+                      "title": "Artifact Type",
+                      "enum": ["custom_drkar"],
+                      "type": "string",
+                      "default": "custom_drkar"
+                    },
+                    "drkar_artifacts_version": {
+                      "title": "Drkar Artifacts Version",
+                      "type": "string"
+                    }
+                  }
+                }
+              ],
+              "discriminator": {
+                "propertyName": "artifact_type",
+                "mapping": {
+                  "new": "#/components/schemas/NewArtifactIn",
+                  "defined": "#/components/schemas/DefinedArtifactIn",
+                  "custom": "#/components/schemas/CustomArtifactIn",
+                  "custom_drkar": "#/components/schemas/CustomDrkarArtifactIn"
+                }
+              }
+            },
+            "options": {
+              "title": "Options",
+              "oneOf": [
+                {
+                  "title": "DockerizedOptionsIn",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["dockerized"],
+                      "type": "string",
+                      "default": "dockerized"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "disable_eda_dynamic_scaling": {
+                      "title": "Disable Eda Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "can_use_spot_for_webserver_components": {
+                      "title": "Can Use Spot For Webserver Components",
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                {
+                  "title": "YARNOptionsIn",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["yarn"],
+                      "type": "string",
+                      "default": "yarn"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "enable_yarn_overbooking": {
+                      "title": "Enable Yarn Overbooking",
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                },
+                {
+                  "title": "RPMOptionsIn",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["rpm"],
+                      "type": "string",
+                      "default": "rpm"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "disable_eda_dynamic_scaling": {
+                      "title": "Disable Eda Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "can_use_spot_for_webserver_components": {
+                      "title": "Can Use Spot For Webserver Components",
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                {
+                  "title": "GPUOptionsIn",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["gpu"],
+                      "type": "string",
+                      "default": "gpu"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "k8s_nodes": {
+                      "title": "K8S Nodes",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "can_use_spot_for_webserver_components": {
+                      "title": "Can Use Spot For Webserver Components",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot_for_worker_components": {
+                      "title": "Can Use Spot For Worker Components",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "enable_cluster_autoscaler": {
+                      "title": "Enable Cluster Autoscaler",
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                },
+                {
+                  "title": "TShirtOptionsIn",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["tshirt"],
+                      "type": "string",
+                      "default": "tshirt"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "terminate_pipeline_overrides": {
+                      "title": "Terminate Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "metadata_json_overrides": {
+                      "title": "Metadata Json Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "tshirt_size": {
+                      "allOf": [
+                        {
+                          "title": "TShirtSize",
+                          "enum": [
+                            "small",
+                            "medium",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "mlops/small",
+                            "mlops/medium",
+                            "mlops/large"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    }
+                  }
+                },
+                {
+                  "title": "K8sOptionsIn",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["k8s"],
+                      "type": "string",
+                      "default": "k8s"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "terminate_pipeline_overrides": {
+                      "title": "Terminate Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "metadata_json_overrides": {
+                      "title": "Metadata Json Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "k8s_nodes": {
+                      "title": "K8S Nodes",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "can_use_spot_for_webserver_components": {
+                      "title": "Can Use Spot For Webserver Components",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot_for_worker_components": {
+                      "title": "Can Use Spot For Worker Components",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "enable_cluster_autoscaler": {
+                      "title": "Enable Cluster Autoscaler",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "meta_learning_dev_node": {
+                      "title": "Meta Learning Dev Node",
+                      "allOf": [
+                        {
+                          "title": "MetaLearningDevNode",
+                          "type": "object",
+                          "properties": {
+                            "enabled": {
+                              "title": "Enabled",
+                              "type": "boolean",
+                              "default": false
+                            },
+                            "meta_learning_sha": {
+                              "title": "Meta Learning Sha",
+                              "type": "string",
+                              "default": "origin/main"
+                            },
+                            "instance_type": {
+                              "title": "Instance Type",
+                              "type": "string",
+                              "default": "r5.8xlarge"
+                            },
+                            "instance_boot_volume": {
+                              "title": "Instance Boot Volume",
+                              "type": "integer",
+                              "default": 50
+                            },
+                            "api_port": {
+                              "title": "Api Port",
+                              "type": "integer",
+                              "default": 5301
+                            },
+                            "digest_limit": {
+                              "title": "Digest Limit",
+                              "type": "integer",
+                              "default": 150000
+                            },
+                            "digest_name": {
+                              "title": "Digest Name",
+                              "type": "string",
+                              "default": "shrink-mbtest"
+                            }
+                          }
+                        }
+                      ],
+                      "default": {
+                        "enabled": false,
+                        "meta_learning_sha": "origin/main",
+                        "instance_type": "r5.8xlarge",
+                        "instance_boot_volume": 50,
+                        "api_port": 5301,
+                        "digest_limit": 150000,
+                        "digest_name": "shrink-mbtest"
+                      }
+                    }
+                  }
+                },
+                {
+                  "title": "OpenShiftOptionsIn",
+                  "required": ["platform"],
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["openshift"],
+                      "type": "string"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              ],
+              "discriminator": {
+                "propertyName": "platform",
+                "mapping": {
+                  "dockerized": "#/components/schemas/DockerizedOptionsIn",
+                  "yarn": "#/components/schemas/YARNOptionsIn",
+                  "rpm": "#/components/schemas/RPMOptionsIn",
+                  "gpu": "#/components/schemas/GPUOptionsIn",
+                  "tshirt": "#/components/schemas/TShirtOptionsIn",
+                  "k8s": "#/components/schemas/K8sOptionsIn",
+                  "openshift": "#/components/schemas/OpenShiftOptionsIn"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "CustomClusterIn",
+          "required": ["datarobot_app_uri", "mongo_uri"],
+          "type": "object",
+          "properties": {
+            "launch_type": {
+              "title": "Launch Type",
+              "enum": ["custom"],
+              "type": "string",
+              "default": "custom"
+            },
+            "datarobot_app_uri": {
+              "title": "Datarobot App Uri",
+              "type": "string"
+            },
+            "mongo_uri": {
+              "title": "Mongo Uri",
+              "type": "string"
+            },
+            "prediction_api_url": {
+              "title": "Prediction Api Url",
+              "type": "string",
+              "default": "http://127.0.0.1/predApi/v1.0"
+            }
+          }
+        }
+      ],
+      "discriminator": {
+        "propertyName": "launch_type",
+        "mapping": {
+          "aws": "#/components/schemas/AWSClusterIn",
+          "custom": "#/components/schemas/CustomClusterIn"
+        }
+      }
+    }
+  }
+}

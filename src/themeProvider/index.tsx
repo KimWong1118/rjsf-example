@@ -1,0 +1,15 @@
+import React, { FC } from 'react';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from './theme';
+
+const ThemeProvider: FC = ({
+    children,
+}) => (
+    <MuiThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+    </MuiThemeProvider>
+);
+
+export default ThemeProvider;

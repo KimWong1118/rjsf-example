@@ -1,0 +1,1693 @@
+{
+  "title": "MBTestIn",
+  "required": [
+    "description",
+    "cluster_options",
+    "test_options",
+    "initial_params"
+  ],
+  "type": "object",
+  "properties": {
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "tags": {
+      "title": "Tags",
+      "type": "array",
+      "items": {},
+      "default": []
+    },
+    "cluster_options": {
+      "title": "Cluster Options",
+      "oneOf": [
+        {
+          "title": "AWSCluster",
+          "required": ["artifact", "options"],
+          "type": "object",
+          "properties": {
+            "launch_type": {
+              "title": "Launch Type",
+              "enum": ["aws"],
+              "type": "string",
+              "default": "aws"
+            },
+            "artifact": {
+              "title": "Artifact",
+              "oneOf": [
+                {
+                  "title": "NewArtifact",
+                  "type": "object",
+                  "properties": {
+                    "artifact_type": {
+                      "title": "Artifact Type",
+                      "enum": ["new"],
+                      "type": "string",
+                      "default": "new"
+                    },
+                    "datarobot_branch": {
+                      "title": "Datarobot Branch",
+                      "type": "string",
+                      "default": "origin/master"
+                    }
+                  }
+                },
+                {
+                  "title": "DefinedArtifact",
+                  "type": "object",
+                  "properties": {
+                    "artifact_type": {
+                      "title": "Artifact Type",
+                      "enum": ["defined"],
+                      "type": "string",
+                      "default": "defined"
+                    },
+                    "datarobot_artifact": {
+                      "title": "Datarobot Artifact",
+                      "type": "string",
+                      "default": "shakedown_master"
+                    }
+                  }
+                },
+                {
+                  "title": "CustomArtifact",
+                  "required": ["bundle_version"],
+                  "type": "object",
+                  "properties": {
+                    "artifact_type": {
+                      "title": "Artifact Type",
+                      "enum": ["custom"],
+                      "type": "string",
+                      "default": "custom"
+                    },
+                    "bundle_version": {
+                      "title": "Bundle Version",
+                      "type": "string"
+                    },
+                    "csd_version": {
+                      "title": "Csd Version",
+                      "type": "string"
+                    },
+                    "dr_parcel": {
+                      "title": "Dr Parcel",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "title": "CustomDrkarArtifact",
+                  "required": ["drkar_artifacts_version"],
+                  "type": "object",
+                  "properties": {
+                    "artifact_type": {
+                      "title": "Artifact Type",
+                      "enum": ["custom_drkar"],
+                      "type": "string",
+                      "default": "custom_drkar"
+                    },
+                    "drkar_artifacts_version": {
+                      "title": "Drkar Artifacts Version",
+                      "type": "string"
+                    }
+                  }
+                }
+              ],
+              "discriminator": {
+                "propertyName": "artifact_type",
+                "mapping": {
+                  "new": "#/components/schemas/NewArtifactIn",
+                  "defined": "#/components/schemas/DefinedArtifactIn",
+                  "custom": "#/components/schemas/CustomArtifactIn",
+                  "custom_drkar": "#/components/schemas/CustomDrkarArtifactIn"
+                }
+              }
+            },
+            "options": {
+              "title": "Options",
+              "oneOf": [
+                {
+                  "title": "Dockerized",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["dockerized"],
+                      "type": "string",
+                      "default": "dockerized"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "disable_eda_dynamic_scaling": {
+                      "title": "Disable Eda Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "can_use_spot_for_webserver_components": {
+                      "title": "Can Use Spot For Webserver Components",
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                {
+                  "title": "YARN",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["yarn"],
+                      "type": "string",
+                      "default": "yarn"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "enable_yarn_overbooking": {
+                      "title": "Enable Yarn Overbooking",
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                },
+                {
+                  "title": "RPM",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["rpm"],
+                      "type": "string",
+                      "default": "rpm"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "disable_eda_dynamic_scaling": {
+                      "title": "Disable Eda Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "can_use_spot_for_webserver_components": {
+                      "title": "Can Use Spot For Webserver Components",
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                {
+                  "title": "GPU",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["gpu"],
+                      "type": "string",
+                      "default": "gpu"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "gpu_workers_type": {
+                      "allOf": [
+                        {
+                          "title": "GPUWorkerType",
+                          "enum": ["p2.xlarge", "g3s.xlarge", "g4dn.2xlarge"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "p2.xlarge"
+                    },
+                    "gpu_workers_count": {
+                      "title": "Gpu Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "disable_eda_dynamic_scaling": {
+                      "title": "Disable Eda Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "can_use_spot_for_webserver_components": {
+                      "title": "Can Use Spot For Webserver Components",
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                {
+                  "title": "T-shirt",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["tshirt"],
+                      "type": "string",
+                      "default": "tshirt"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "terminate_pipeline_overrides": {
+                      "title": "Terminate Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "metadata_json_overrides": {
+                      "title": "Metadata Json Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "tshirt_size": {
+                      "allOf": [
+                        {
+                          "title": "TShirtSize",
+                          "enum": [
+                            "small",
+                            "medium",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "mlops/small",
+                            "mlops/medium",
+                            "mlops/large"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    }
+                  }
+                },
+                {
+                  "title": "K8S",
+                  "required": ["meta_learning_dev_node"],
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["k8s"],
+                      "type": "string",
+                      "default": "k8s"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "terminate_pipeline_overrides": {
+                      "title": "Terminate Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "metadata_json_overrides": {
+                      "title": "Metadata Json Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "k8s_nodes": {
+                      "title": "K8S Nodes",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "can_use_spot_for_webserver_components": {
+                      "title": "Can Use Spot For Webserver Components",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot_for_worker_components": {
+                      "title": "Can Use Spot For Worker Components",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "enable_cluster_autoscaler": {
+                      "title": "Enable Cluster Autoscaler",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "meta_learning_dev_node": {
+                      "title": "MetaLearningDevNodeIn",
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "title": "Enabled",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "meta_learning_sha": {
+                          "title": "Meta Learning Sha",
+                          "type": "string",
+                          "default": "origin/main"
+                        },
+                        "instance_type": {
+                          "title": "Instance Type",
+                          "type": "string",
+                          "default": "r5.8xlarge"
+                        },
+                        "instance_boot_volume": {
+                          "title": "Instance Boot Volume",
+                          "type": "integer",
+                          "default": 50
+                        },
+                        "api_port": {
+                          "title": "Api Port",
+                          "type": "integer",
+                          "default": 5301
+                        },
+                        "digest_limit": {
+                          "title": "Digest Limit",
+                          "type": "integer",
+                          "default": 150000
+                        },
+                        "digest_name": {
+                          "title": "Digest Name",
+                          "type": "string",
+                          "default": "shrink-mbtest"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "title": "OpenShift",
+                  "type": "object",
+                  "properties": {
+                    "platform": {
+                      "title": "Platform",
+                      "enum": ["openshift"],
+                      "type": "string",
+                      "default": "openshift"
+                    },
+                    "dr_platform_type": {
+                      "allOf": [
+                        {
+                          "title": "DRPlatformType",
+                          "enum": ["enterprise", "enterprise-cloud"],
+                          "type": "string",
+                          "description": "An enumeration."
+                        }
+                      ],
+                      "default": "enterprise-cloud"
+                    },
+                    "metablueprint": {
+                      "title": "Metablueprint",
+                      "type": "string",
+                      "default": ""
+                    },
+                    "drenv_overrides": {
+                      "title": "Drenv Overrides",
+                      "type": "object",
+                      "default": {}
+                    },
+                    "drca_pipeline_overrides": {
+                      "title": "Drca Pipeline Overrides",
+                      "type": "string",
+                      "default": "{}"
+                    },
+                    "disable_termination": {
+                      "title": "Disable Termination",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "can_use_spot": {
+                      "title": "Can Use Spot",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "lifetime_hours": {
+                      "title": "Lifetime Hours",
+                      "type": "integer",
+                      "default": 72
+                    },
+                    "workers_type": {
+                      "allOf": [
+                        {
+                          "title": "WorkerSize",
+                          "enum": [
+                            "small",
+                            "large",
+                            "xlarge",
+                            "xxlarge",
+                            "xxxlarge"
+                          ],
+                          "type": "string",
+                          "description": "Types of instances used for deployment."
+                        }
+                      ],
+                      "default": "small"
+                    },
+                    "webserver_instance_type": {
+                      "title": "Webserver Instance Type",
+                      "type": "string",
+                      "default": "r4.xlarge"
+                    },
+                    "workers_count": {
+                      "title": "Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "eda_workers_count": {
+                      "title": "Eda Workers Count",
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "prediction_workers_count": {
+                      "title": "Prediction Workers Count",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "dynamic_scaling": {
+                      "title": "Dynamic Scaling",
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              ],
+              "discriminator": {
+                "propertyName": "platform",
+                "mapping": {
+                  "dockerized": "#/components/schemas/DockerizedOptionsInFromMBTest",
+                  "yarn": "#/components/schemas/YARNOptionsInFromMBTest",
+                  "rpm": "#/components/schemas/RPMOptionsInFromMBTest",
+                  "gpu": "#/components/schemas/GPUOptionsInFromMBTest",
+                  "tshirt": "#/components/schemas/TShirtOptionsInFromMBTest",
+                  "k8s": "#/components/schemas/K8sOptionsInFromMBTest",
+                  "openshift": "#/components/schemas/OpenShiftOptionsInFromMBTest"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "CustomCluster",
+          "required": ["datarobot_app_uri", "mongo_uri"],
+          "type": "object",
+          "properties": {
+            "launch_type": {
+              "title": "Launch Type",
+              "enum": ["custom"],
+              "type": "string",
+              "default": "custom"
+            },
+            "datarobot_app_uri": {
+              "title": "Datarobot App Uri",
+              "type": "string"
+            },
+            "mongo_uri": {
+              "title": "Mongo Uri",
+              "type": "string"
+            },
+            "prediction_api_url": {
+              "title": "Prediction Api Url",
+              "type": "string",
+              "default": "http://127.0.0.1/predApi/v1.0"
+            }
+          }
+        }
+      ],
+      "discriminator": {
+        "propertyName": "launch_type",
+        "mapping": {
+          "aws": "#/components/schemas/AWSClusterInFromMBTest",
+          "custom": "#/components/schemas/CustomClusterIn"
+        }
+      }
+    },
+    "test_options": {
+      "title": "TestOptions",
+      "required": ["datasets"],
+      "type": "object",
+      "properties": {
+        "datasets": {
+          "title": "Datasets",
+          "oneOf": [
+            {
+              "title": "NewDatasets",
+              "required": ["name", "data"],
+              "type": "object",
+              "properties": {
+                "type": {
+                  "title": "Type",
+                  "enum": ["new"],
+                  "type": "string",
+                  "default": "new"
+                },
+                "name": {
+                  "title": "Name",
+                  "type": "string"
+                },
+                "data": {
+                  "title": "Data",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "title": "DefinedDatasets",
+              "required": ["name"],
+              "type": "object",
+              "properties": {
+                "type": {
+                  "title": "Type",
+                  "enum": ["defined"],
+                  "type": "string",
+                  "default": "defined"
+                },
+                "name": {
+                  "title": "Name",
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "discriminator": {
+            "propertyName": "type",
+            "mapping": {
+              "new": "#/components/schemas/NewDatasetsIn",
+              "defined": "#/components/schemas/DefinedDatasetsIn"
+            }
+          }
+        },
+        "shrink_branch": {
+          "title": "Shrink Branch",
+          "type": "string",
+          "default": "origin/master"
+        },
+        "api_max_wait": {
+          "title": "Api Max Wait",
+          "type": "integer",
+          "default": 0
+        },
+        "concurrent_projects": {
+          "title": "Concurrent Projects",
+          "type": "integer",
+          "default": 50
+        },
+        "projects_type": {
+          "allOf": [
+            {
+              "title": "ProjectType",
+              "enum": [
+                "All",
+                "Regression",
+                "Two Classes",
+                "Multiclass",
+                "Time Series"
+              ],
+              "type": "string",
+              "description": "Project types."
+            }
+          ],
+          "default": "All"
+        },
+        "autopilot_run_options": {
+          "title": "Autopilot Run Options",
+          "allOf": [
+            {
+              "title": "AutopilotRunOptions",
+              "type": "object",
+              "properties": {
+                "autopilot_setting": {
+                  "allOf": [
+                    {
+                      "title": "AutopilotSetting",
+                      "enum": [
+                        "MANUAL_MODE",
+                        "QUICK_RUN",
+                        "FULL_AUTOPILOT",
+                        "COMPREHENSIVE"
+                      ],
+                      "type": "string",
+                      "description": "\n    Setting for Autopilot from mbtest, passed by UI\n    create-mbtest-controller, jenkins mbtest creation,\n    and shrink mbtest creation\n    "
+                    }
+                  ],
+                  "default": "QUICK_RUN"
+                },
+                "scoring_code_only": {
+                  "title": "Scoring Code Only",
+                  "type": "boolean",
+                  "default": false
+                },
+                "blend_best_models": {
+                  "title": "Blend Best Models",
+                  "type": "boolean",
+                  "default": true
+                },
+                "prepare_model_for_deployment": {
+                  "title": "Prepare Model For Deployment",
+                  "type": "boolean",
+                  "default": true
+                },
+                "min_secondary_validation_model_count": {
+                  "title": "Min Secondary Validation Model Count",
+                  "type": "integer",
+                  "default": 0
+                },
+                "shap_only_mode": {
+                  "title": "Shap Only Mode",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          ],
+          "default": {
+            "autopilot_setting": "QUICK_RUN",
+            "scoring_code_only": false,
+            "blend_best_models": true,
+            "prepare_model_for_deployment": true,
+            "min_secondary_validation_model_count": 0,
+            "shap_only_mode": false
+          }
+        },
+        "autopilot_rerun_options": {
+          "title": "Autopilot Rerun Options",
+          "allOf": [
+            {
+              "title": "AutopilotRerunOptions",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "title": "Enabled",
+                  "type": "boolean",
+                  "default": false
+                },
+                "featurelist": {
+                  "title": "Featurelist",
+                  "type": "string",
+                  "default": "Informative"
+                },
+                "modeling_mode": {
+                  "title": "Modeling Mode",
+                  "type": "string",
+                  "default": "AUTO"
+                },
+                "scoring_code_only": {
+                  "title": "Scoring Code Only",
+                  "type": "boolean",
+                  "default": false
+                },
+                "blend_best_models": {
+                  "title": "Blend Best Models",
+                  "type": "boolean",
+                  "default": false
+                },
+                "prepare_model_for_deployment": {
+                  "title": "Prepare Model For Deployment",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          ],
+          "default": {
+            "enabled": false,
+            "featurelist": "Informative",
+            "modeling_mode": "AUTO",
+            "scoring_code_only": false,
+            "blend_best_models": false,
+            "prepare_model_for_deployment": false
+          }
+        },
+        "accuracy_optimized_mb": {
+          "title": "Accuracy Optimized Mb",
+          "type": "boolean",
+          "default": false
+        },
+        "run_all_repository_blueprints": {
+          "title": "Run All Repository Blueprints",
+          "type": "boolean",
+          "default": false
+        },
+        "final_model_sample_pct": {
+          "title": "Final Model Sample Pct",
+          "type": "integer",
+          "default": 95
+        },
+        "enable_anomaly_detection_table_testing": {
+          "title": "Enable Anomaly Detection Table Testing",
+          "type": "boolean",
+          "default": false
+        },
+        "enable_feature_impact": {
+          "title": "Enable Feature Impact",
+          "type": "boolean",
+          "default": false
+        },
+        "enable_model_xray_testing": {
+          "title": "Enable Model Xray Testing",
+          "type": "boolean",
+          "default": false
+        },
+        "feature_impact_top_n_models": {
+          "title": "Feature Impact Top N Models",
+          "type": "integer",
+          "default": 1
+        },
+        "enable_custom_sample_size": {
+          "title": "Enable Custom Sample Size",
+          "type": "boolean",
+          "default": false
+        },
+        "enable_optimized_partitioning": {
+          "title": "Enable Optimized Partitioning",
+          "type": "boolean",
+          "default": true
+        },
+        "feature_impact_sample_size": {
+          "title": "Feature Impact Sample Size",
+          "type": "integer",
+          "default": 100
+        },
+        "enable_retrain_best_models_at_max_sample": {
+          "title": "Enable Retrain Best Models At Max Sample",
+          "type": "boolean",
+          "default": false
+        },
+        "make_blender_from_final_pct_models": {
+          "title": "Make Blender From Final Pct Models",
+          "type": "boolean",
+          "default": false
+        },
+        "enable_profit_curve_calculation": {
+          "title": "Enable Profit Curve Calculation",
+          "type": "boolean",
+          "default": false
+        },
+        "profit_curve_top_n_models": {
+          "title": "Profit Curve Top N Models",
+          "type": "integer",
+          "default": 1
+        },
+        "rating_table_validation": {
+          "title": "Rating Table Validation",
+          "type": "boolean",
+          "default": false
+        },
+        "enable_feature_discovery": {
+          "title": "Enable Feature Discovery",
+          "type": "boolean",
+          "default": false
+        },
+        "enable_external_scoring": {
+          "title": "Enable External Scoring",
+          "type": "boolean",
+          "default": false
+        },
+        "model_deployment_testing_options": {
+          "title": "Model Deployment Testing Options",
+          "allOf": [
+            {
+              "title": "ModelDeploymentTestingOptions",
+              "type": "object",
+              "properties": {
+                "test_monitoring_and_management": {
+                  "title": "Test Monitoring And Management",
+                  "type": "boolean",
+                  "default": false
+                },
+                "test_bias_and_fairness_monitoring_and_management": {
+                  "title": "Test Bias And Fairness Monitoring And Management",
+                  "type": "boolean",
+                  "default": false
+                },
+                "test_accuracy_metrics_against_reference_values": {
+                  "title": "Test Accuracy Metrics Against Reference Values",
+                  "type": "boolean",
+                  "default": false
+                },
+                "test_model_deployment_retraining": {
+                  "title": "Test Model Deployment Retraining",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          ],
+          "default": {
+            "test_monitoring_and_management": false,
+            "test_bias_and_fairness_monitoring_and_management": false,
+            "test_accuracy_metrics_against_reference_values": false,
+            "test_model_deployment_retraining": false
+          }
+        },
+        "prime_options": {
+          "title": "Prime Options",
+          "allOf": [
+            {
+              "title": "PrimeOptions",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "title": "Enabled",
+                  "type": "boolean",
+                  "default": false
+                },
+                "validation": {
+                  "title": "Validation",
+                  "type": "boolean",
+                  "default": false
+                },
+                "strategy": {
+                  "allOf": [
+                    {
+                      "title": "DataRobotPrimeStrategy",
+                      "enum": [
+                        "APPROXIMATE_TOP_N_MODELS",
+                        "APPROXIMATE_ALL_MODELS"
+                      ],
+                      "type": "string",
+                      "description": "\n    Prime Strategy passed by UI create-mbtest-controller,\n    jenkins mbtest creation, and shrink mbtest creation\n    "
+                    }
+                  ],
+                  "default": "APPROXIMATE_TOP_N_MODELS"
+                },
+                "strategy_n": {
+                  "title": "Strategy N",
+                  "type": "integer",
+                  "default": 1
+                }
+              }
+            }
+          ],
+          "default": {
+            "enabled": false,
+            "validation": false,
+            "strategy": "APPROXIMATE_TOP_N_MODELS",
+            "strategy_n": 1
+          }
+        },
+        "prediction_consistency_options": {
+          "title": "Prediction Consistency Options",
+          "allOf": [
+            {
+              "title": "PredictionConsistencyOptions",
+              "type": "object",
+              "properties": {
+                "enable_prediction_explanations_consistency_testing": {
+                  "title": "Enable Prediction Explanations Consistency Testing",
+                  "type": "boolean",
+                  "default": false
+                },
+                "enable_extended_prediction_model_list": {
+                  "title": "Enable Extended Prediction Model List",
+                  "type": "boolean",
+                  "default": false
+                },
+                "prediction_consistency_drivers": {
+                  "title": "Prediction Consistency Drivers",
+                  "allOf": [
+                    {
+                      "title": "PredictionConsistencyDrivers",
+                      "type": "object",
+                      "properties": {
+                        "prediction_deployments_driver": {
+                          "title": "Prediction Deployments Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "scoring_code_driver": {
+                          "title": "Scoring Code Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "spark_160_scoring_code_driver": {
+                          "title": "Spark 160 Scoring Code Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "pyspark_160_scoring_code_driver": {
+                          "title": "Pyspark 160 Scoring Code Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "spark_243_scoring_code_driver": {
+                          "title": "Spark 243 Scoring Code Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "pyspark_243_scoring_code_driver": {
+                          "title": "Pyspark 243 Scoring Code Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "spark_300_scoring_code_driver": {
+                          "title": "Spark 300 Scoring Code Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "pyspark_300_scoring_code_driver": {
+                          "title": "Pyspark 300 Scoring Code Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "snowflake_scoring_code_driver": {
+                          "title": "Snowflake Scoring Code Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "prime_drivers": {
+                          "title": "Prime Drivers",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "batch_prediction_driver": {
+                          "title": "Batch Prediction Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "batch_prediction_leaderboard_driver": {
+                          "title": "Batch Prediction Leaderboard Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "deployments_feature_cache_driver": {
+                          "title": "Deployments Feature Cache Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "low_latency_prediction_driver": {
+                          "title": "Low Latency Prediction Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "pps_driver": {
+                          "title": "Pps Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "batch_pps_driver": {
+                          "title": "Batch Pps Driver",
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "segmentation_prediction_driver": {
+                          "title": "Segmentation Prediction Driver",
+                          "type": "boolean",
+                          "default": false
+                        }
+                      }
+                    }
+                  ],
+                  "default": {
+                    "prediction_deployments_driver": false,
+                    "scoring_code_driver": false,
+                    "spark_160_scoring_code_driver": false,
+                    "pyspark_160_scoring_code_driver": false,
+                    "spark_243_scoring_code_driver": false,
+                    "pyspark_243_scoring_code_driver": false,
+                    "spark_300_scoring_code_driver": false,
+                    "pyspark_300_scoring_code_driver": false,
+                    "snowflake_scoring_code_driver": false,
+                    "prime_drivers": false,
+                    "batch_prediction_driver": false,
+                    "batch_prediction_leaderboard_driver": false,
+                    "deployments_feature_cache_driver": false,
+                    "low_latency_prediction_driver": false,
+                    "pps_driver": false,
+                    "batch_pps_driver": false,
+                    "segmentation_prediction_driver": false
+                  }
+                }
+              }
+            }
+          ],
+          "default": {
+            "enable_prediction_explanations_consistency_testing": false,
+            "enable_extended_prediction_model_list": false,
+            "prediction_consistency_drivers": {
+              "prediction_deployments_driver": false,
+              "scoring_code_driver": false,
+              "spark_160_scoring_code_driver": false,
+              "pyspark_160_scoring_code_driver": false,
+              "spark_243_scoring_code_driver": false,
+              "pyspark_243_scoring_code_driver": false,
+              "spark_300_scoring_code_driver": false,
+              "pyspark_300_scoring_code_driver": false,
+              "snowflake_scoring_code_driver": false,
+              "prime_drivers": false,
+              "batch_prediction_driver": false,
+              "batch_prediction_leaderboard_driver": false,
+              "deployments_feature_cache_driver": false,
+              "low_latency_prediction_driver": false,
+              "pps_driver": false,
+              "batch_pps_driver": false,
+              "segmentation_prediction_driver": false
+            }
+          }
+        },
+        "time_series_options": {
+          "title": "Time Series Options",
+          "allOf": [
+            {
+              "title": "TimeSeriesOptions",
+              "type": "object",
+              "properties": {
+                "compute_all_series": {
+                  "title": "Compute All Series",
+                  "type": "boolean",
+                  "default": false
+                },
+                "skip_accuracy_over_time_computing": {
+                  "title": "Skip Accuracy Over Time Computing",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          ],
+          "default": {
+            "compute_all_series": false,
+            "skip_accuracy_over_time_computing": false
+          }
+        },
+        "shap_options": {
+          "title": "Shap Options",
+          "allOf": [
+            {
+              "title": "SHAPOptions",
+              "type": "object",
+              "properties": {
+                "feature_impact": {
+                  "title": "Feature Impact",
+                  "type": "boolean",
+                  "default": false
+                },
+                "prediction_explanations": {
+                  "title": "Prediction Explanations",
+                  "type": "boolean",
+                  "default": false
+                },
+                "training_prediction_explanations_preview": {
+                  "title": "Training Prediction Explanations Preview",
+                  "type": "boolean",
+                  "default": false
+                },
+                "training_prediction_explanations": {
+                  "title": "Training Prediction Explanations",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          ],
+          "default": {
+            "feature_impact": false,
+            "prediction_explanations": false,
+            "training_prediction_explanations_preview": false,
+            "training_prediction_explanations": false
+          }
+        },
+        "image_augmentation_options": {
+          "title": "Image Augmentation Options",
+          "allOf": [
+            {
+              "title": "ImageAugmentationOptions",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "title": "Name",
+                  "type": "string",
+                  "default": ""
+                },
+                "transformation_probability": {
+                  "title": "Transformation Probability",
+                  "type": "number",
+                  "default": 0
+                },
+                "number_of_new_images": {
+                  "title": "Number Of New Images",
+                  "type": "integer",
+                  "default": 1
+                },
+                "transformations": {
+                  "title": "Transformations",
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "default": []
+                }
+              }
+            }
+          ],
+          "default": {
+            "name": "",
+            "transformation_probability": 0,
+            "number_of_new_images": 1,
+            "transformations": []
+          }
+        },
+        "test_regression": {
+          "title": "Test Regression",
+          "type": "boolean",
+          "default": false
+        },
+        "additional_permissions": {
+          "title": "Additional Permissions",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "ENABLE_PRIME_MODEL_DEV",
+            "ENABLE_API_DEV_VERSION",
+            "ENABLE_CODE_GENERATION",
+            "ENABLE_APACHE_SPARK_API_FOR_SCORING_CODE",
+            "ENABLE_EUREQA_BLUEPRINT",
+            "ENABLE_COMPLIANCE_DOCUMENTATION",
+            "ENABLE_DATABASE_CONNECTIVITY",
+            "ENABLE_100GB_PROJECT",
+            "ENABLE_ANOMALY_DETECTION",
+            "ENABLE_DATASETS_SERVICE_ETL",
+            "ENABLE_TIME_SERIES_REASON_CODES",
+            "ENABLE_FEATURE_INTER_IN_FEATURE_IMPACT",
+            "ENABLE_DATA_MANAGEMENT_FOR_ALL_USERS",
+            "ENABLE_DATA_MANAGEMENT",
+            "ENABLE_DOWNLOAD_DATASET",
+            "ENABLE_SERVERSIDE_BATCHSCORING",
+            "ENABLE_TIME_SERIES_SERVERSIDE_BATCHSCORING",
+            "ENABLE_UNSUPERVISED_MODE",
+            "ENABLE_DATA_QUALITY_ASSESSMENT",
+            "ENABLE_IMAGE_VAR_TYPE",
+            "PREDICTIONS_ADMIN",
+            "ENABLE_SAFER_API",
+            "ENABLE_FEATURE_DISCOVERY_FOR_PRIMARY_DATASET",
+            "ENABLE_FEATURE_DISCOVERY_FOR_SPECIAL_NUMERIC",
+            "ENABLE_COMPREHENSIVE_AUTOPILOT",
+            "ENABLE_TIME_SERIES_5GB",
+            "ENABLE_SCORING_CODE_TS",
+            "ENABLE_UNSUPERVISED_MODE_NON_TS",
+            "ENABLE_FEATURE_DISCOVERY_FOR_TEXT",
+            "ENABLE_SAFER_BATCH_PREDICTIONS",
+            "ENABLE_KERAS_BLUEPRINTS",
+            "ENABLE_SAFER_SUPERVISED_FEATURE_REDUCTION",
+            "ENABLE_SAFER_ADDITIONAL_FDWS",
+            "ENABLE_FEATURE_DISCOVERY_FOR_MULTIPLE_FDW",
+            "ENABLE_EXTRACT_GEOSPATIAL_FEATURES",
+            "ENABLE_GEOSPATIAL_AUTO_LATLON_TRANSFORM",
+            "ENABLE_GEOSPATIAL_SUPPORT",
+            "ENABLE_GEOSPATIAL_MODELING",
+            "ENABLE_IMAGE_AUGMENTATION_V2",
+            "ENABLE_TS_CHOOSE_YOUR_OWN_BASELINE",
+            "ENABLE_TIME_SERIES_ROI_BACKTESTS",
+            "ENABLE_DOWNLOADABLE_PPS",
+            "ENABLE_MMM_MODEL_PACKAGE_EXPORT",
+            "ENABLE_IMPROVED_NOWCASTING",
+            "ENABLE_TIME_SERIES_PARTIAL_HISTORY_PREDICTIONS",
+            "ENABLE_MULTICATEGORICAL",
+            "ENABLE_MLOPS",
+            "ENABLE_TIME_SERIES_DATA_PREP",
+            "ENABLE_TIME_SERIES_FEATURE_REDUCTION_OVERRIDE",
+            "ENABLE_TIME_SERIES_HIGH_RESOLUTION_CALENDARS",
+            "ENABLE_MULTICLASS_FEATURE_EFFECTS",
+            "ENABLE_SAFER_SUPPORT_MULTIPLE_FDW",
+            "ENABLE_SAFER_ON_DEMAND_FEATURE_ENGINEERING",
+            "ENABLE_S3_INGESTION"
+          ]
+        }
+      }
+    }
+  }
+}

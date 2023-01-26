@@ -1,0 +1,42 @@
+.inner-block {
+    display: inline-block;
+    padding-right: 4px;
+    margin-bottom: 0;
+}
+
+.grid-cell {
+    display: flex;
+}
+
+.object-wrapper {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.gutter-bottom,
+.expand-panel-wrapper {
+    margin-bottom: 16px;
+}
+
+.expand-panel-description {
+    display: block;
+    flex-basis: 60%;
+}
+
+.gutter-right {
+    margin-right: 16px;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-left {
+    text-align: left;
+}
+
+.gutter-top {
+    margin-top: 16px;
+}
